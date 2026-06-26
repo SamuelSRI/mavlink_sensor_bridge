@@ -1,0 +1,12 @@
+mavlink_sensor_bridge_node:
+  ros__parameters:
+    port: "/dev/ttyS0"
+    baudrate: 115200
+
+    imu_frame_id: "imu_link"
+    gps_frame_id: "gps_link"
+
+    publish_rate_hz: 100.0
+    heartbeat_rate_hz: 1.0
+
+    debug: false
