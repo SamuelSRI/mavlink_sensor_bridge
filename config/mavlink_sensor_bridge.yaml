@@ -1,6 +1,6 @@
 mavlink_sensor_bridge_node:
   ros__parameters:
-    port: "/dev/ttyACM0"
+    port: "/dev/ttyTHS1"
     baudrate: 115200
 
     imu_frame_id: "imu_link"
