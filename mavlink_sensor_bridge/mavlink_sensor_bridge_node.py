@@ -270,6 +270,10 @@ class MavlinkSensorBridgeNode(Node):
             # ATTITUDE_QUATERNION arrives around 48 Hz and drives
             # publication of /imu/data.
             return True
+        
+        if msg_type == "ATTITUDE":
+            self.handle_attitude(msg)
+            return True
 
         if msg_type == "RAW_IMU":
             self.handle_raw_imu(msg)
@@ -316,6 +320,35 @@ class MavlinkSensorBridgeNode(Node):
         return math.atan2(
             math.sin(angle),
             math.cos(angle),
+        )
+
+    def handle_attitude(self, msg):
+        """
+        Convert MAVLink ATTITUDE from NED/FRD to ROS ENU/FLU.
+
+        MAVLink:
+        - yaw = 0 toward North
+        - yaw positive clockwise
+        - body frame FRD
+
+        ROS:
+        - yaw = 0 toward East
+        - yaw positive counter-clockwise
+        - body frame FLU
+        """
+
+        yaw_ned = float(msg.yaw)
+
+        yaw_enu = self.normalize_angle(
+            (math.pi / 2.0) - yaw_ned
+        )
+
+        self.last_quaternion = self.yaw_to_quaternion(yaw_enu)
+
+        self.last_angular_velocity = (
+            float(msg.rollspeed),
+            -float(msg.pitchspeed),
+            -float(msg.yawspeed),
         )
 
     def handle_attitude_quaternion(self, msg):
